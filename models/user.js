@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     required: [true, "The password field must be filled in"],
     select: false,
   },
+  isAnonymous: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
@@ -52,4 +56,5 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
     });
 };
 
+//?consider ading a static method to return anonmous?
 module.exports = mongoose.model("user", userSchema);
