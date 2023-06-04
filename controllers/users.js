@@ -39,7 +39,7 @@ const createUser = (req, res, next) => {
           isAnonymous,
         })
           .then((data) =>
-            res.status("201").send({
+            res.status(201).send({
               name: data.name,
               email: data.email,
               isAnonymous: data.isAnonymous,
