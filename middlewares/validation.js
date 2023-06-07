@@ -43,6 +43,8 @@ const validateUserBody = celebrate({
 
 //? why not validate user Id also?//wasn't in original project
 //can these functions be combined or is it ok to have separate?
+
+//router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
   body: Joi.object().keys({
     id: Joi.string().hex().length(24),
@@ -54,4 +56,4 @@ const validateUserId = celebrate({
     id: Joi.string().hex().length(24),
   }),
 });
-module.exports = { validateLoginBody, validateUserBody };
+module.exports = { validateLoginBody, validateUserBody, validateCardId, validateUserId };
