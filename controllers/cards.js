@@ -1,55 +1,132 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const validator = require("validator");
+const Card = require("../models/card");
+
+const BadRequestError = require("../errors/bad-request");
+const NotFoundError = require("../errors/not-found");
+const ForbiddenError = require("../errors/forbidden");
+const ConflictError = require("../errors/conflict");
 const UnauthorizedError = require("../errors/unauthorized");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "The name field must be filled in"],
-    minlength: [2, "The minimum length of the name field is 2"],
-    maxlength: [30, "The maximum length of the name field is 3"],
-  },
-  email: {
-    type: String,
-    required: [true, "The email field must be filled in"],
-    unique: [true, "The email is already registered"],
-    validate: {
-      validator(value) {
-        return validator.isEmail(value);
-      },
-      message: "Please enter a valid email.",
-    },
-  },
-  password: {
-    type: String,
-    required: [true, "The password field must be filled in"],
-    select: false,
-  },
-});
+//check and see if created status needs to be added here
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(
-  email,
-  password
-) {
-  return this.findOne({ email })
-    .select("password")
-    .orFail()
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(
-          new UnauthorizedError("Incorrect email or password")
-        );
+const getCards = (req, res, next) => {
+  Card.find({})
+    .then((cards) => res.send(cards))
+    .catch(next); //equivalent to .catch(err=>next(err));
+};
+
+const getBookmarks = (req, res, next) => {
+  Card.find({})
+    .then((cards) => res.send(cards))
+    .catch(next); //equivalent to .catch(err=>next(err));
+};
+
+const createCard = (req, res, next) => {
+  const { aiId, created, choices, usage, subject, owner } = req.body;
+
+  Card.create({ aiId, created, choices, usage, subject, owner: req.user._id })
+    .then((card) => {
+      res.status(201).send(card);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Data not valid"));
+      } else {
+        next(err);
       }
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(
-            new UnauthorizedError("Incorrect email or password")
-          );
-        }
-        return user;
-      });
     });
 };
 
-module.exports = mongoose.model("user", userSchema);
+const deleteCard = (req, res, next) => {
+  const { cardId } = req.params;
+
+  Card.findById(cardId)
+    .orFail(() => new NotFoundError("No card found with that Id"))
+    .then((card) => {
+
+      if (card.owner.equals(req.user._id)) {
+        Card.findByIdAndDelete(cardId)
+          .orFail(() => new BadRequestError("Cannot Delete"))
+          .then((card) => res.send(card))
+          .catch(next);
+      }
+      throw new ForbiddenError("You do not have rights to delete card");
+    })
+    .catch(next);
+};
+
+
+
+//TODO: logic to consolidate like and dislike functions
+//also is there a way to reuse it for bookmarks?
+//also what is new:true for
+const likeCard = (req, res, next) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  Card.findByIdAndUpdate(
+    cardId,
+    { $addToSet: { likes: userId } },
+    { new: true }
+  )
+    .orFail(() => new NotFoundError("No card found with that Id"))
+    .then((card) => {
+      res.send(card);
+    })
+    .catch(next);
+};
+
+const dislikeCard = (req, res, next) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
+    .orFail(() => new NotFoundError("No card found with that Id"))
+
+    .then((card) => {
+      res.send(card);
+    })
+    .catch(next);
+};
+
+const addBookmark = (req, res, next) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  Card.findByIdAndUpdate(
+    cardId,
+    { $addToSet: { bookmarks: userId } },
+    { new: true }
+  )
+    .orFail(() => new NotFoundError("No card found with that Id"))
+    .then((card) => {
+      res.send(card);
+    })
+    .catch(next);
+};
+
+const removeBookmark = (req, res, next) => {
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  Card.findByIdAndUpdate(
+    cardId,
+    { $pull: { bookmarks: userId } },
+    { new: true }
+  )
+    .orFail(() => new NotFoundError("No card found with that Id"))
+
+    .then((card) => {
+      res.send(card);
+    })
+    .catch(next);
+};
+module.exports = {
+  getCards,
+  getBookmarks,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
+  addBookmark,
+  removeBookmark,
+};
