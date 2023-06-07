@@ -3,6 +3,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const { createUser, loginUser } = require("./controllers/users");
+const {
+  validateLoginBody,
+  validateUserBody,
+} = require("./middlewares/validation");
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
 
@@ -28,8 +32,8 @@ app.use((req, res, next) => {
 app.use(express.json()); //versions express >4.16 can use this instead of bodyparser
 app.use(express.urlencoded({ extended: false }));
 
-app.post("/signup", createUser);
-app.post("/login", loginUser);
+app.post("/signup", validateUserBody, createUser);
+app.post("/login", validateLoginBody, loginUser);
 
 app.use("/users", usersRouter);
 app.use("/cards", cardsRouter);
