@@ -9,12 +9,14 @@ const cardSchema = new mongoose.Schema({
     type: Number,
     required: [true],
   },
-  choices: {
-    text: String,
-    index: Number,
-    logprobs: String,
-    finish_reason: String,
-  },
+  choices: [
+    {
+      text: String,
+      index: Number,
+      logprobs: String,
+      finish_reason: String,
+    },
+  ],
 
   usage: {
     prompt_tokens: Number,

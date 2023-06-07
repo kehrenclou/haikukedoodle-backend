@@ -1,6 +1,7 @@
 //backend/app.js
 const express = require("express");
 const mongoose = require("mongoose");
+const cors =require('cors');
 
 const { createUser, loginUser } = require("./controllers/users");
 const {
@@ -28,6 +29,8 @@ app.use((req, res, next) => {
   next();
 });
 //
+app.use(cors());
+app.options('*',cors());
 
 app.use(express.json()); //versions express >4.16 can use this instead of bodyparser
 app.use(express.urlencoded({ extended: false }));
