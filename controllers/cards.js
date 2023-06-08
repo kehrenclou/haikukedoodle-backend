@@ -42,7 +42,6 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .orFail(() => new NotFoundError("No card found with that Id"))
     .then((card) => {
-
       if (card.owner.equals(req.user._id)) {
         Card.findByIdAndDelete(cardId)
           .orFail(() => new BadRequestError("Cannot Delete"))
@@ -54,14 +53,12 @@ const deleteCard = (req, res, next) => {
     .catch(next);
 };
 
-
-
 //TODO: logic to consolidate like and dislike functions
 //also is there a way to reuse it for bookmarks?
 //also what is new:true for
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
@@ -77,7 +74,7 @@ const likeCard = (req, res, next) => {
 
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const { userId } = req.body;
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .orFail(() => new NotFoundError("No card found with that Id"))

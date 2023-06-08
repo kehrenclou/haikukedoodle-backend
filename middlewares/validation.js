@@ -47,13 +47,13 @@ const validateUserBody = celebrate({
 //router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
   body: Joi.object().keys({
-    id: Joi.string().hex().length(24),
+    id: Joi.string().length(24),
   }),
 });
 
 const validateUserId = celebrate({
   body: Joi.object().keys({
-    id: Joi.string().hex().length(24),
+    id: Joi.string().length(24),
   }),
 });
 module.exports = { validateLoginBody, validateUserBody, validateCardId, validateUserId };
