@@ -1,17 +1,19 @@
 //backend/app.js
 const express = require("express");
 const mongoose = require("mongoose");
-const cors =require('cors');
+const cors = require("cors");
 
 const { createUser, loginUser } = require("./controllers/users");
 const {
   validateLoginBody,
   validateUserBody,
-} = require("./middlewares/validation");
+} = require("./validations/validation");
+const auth = require("./middlewares/auth");
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
 
 const NotFoundError = require("./errors/not-found");
+const { createCard } = require("./controllers/cards");
 
 /* -------------------------- declare app and port -------------------------- */
 const app = express();
@@ -22,23 +24,24 @@ mongoose.connect("mongodb://127.0.0.1/hkkd_db");
 
 /* ----------------------------------- app ---------------------------------- */
 //TODO: delete this temp user idwhen all is working
-app.use((req, res, next) => {
-  req.user = {
-    _id: "647ce03e3b12fb49a2e9bdce",
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: "647ce03e3b12fb49a2e9bdce",
+//   };
+//   next();
+// });
 //
 app.use(cors());
-app.options('*',cors());
+app.options("*", cors());
 
 app.use(express.json()); //versions express >4.16 can use this instead of bodyparser
 app.use(express.urlencoded({ extended: false }));
 
 app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
-
-app.use("/users", usersRouter);
+// app.post("/cards/create", createCard); // AUth Free
+//app.use(auth)//every route would need authentication
+app.use("/users", auth, usersRouter);//if use app.use(auth don't need auth here)
 app.use("/cards", cardsRouter);
 
 app.use((req, res, next) => {

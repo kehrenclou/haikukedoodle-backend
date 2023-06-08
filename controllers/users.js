@@ -14,7 +14,10 @@ const UnauthorizedError = require("../errors/unauthorized");
 //check and see if created status needs to be added here
 
 const sendUserProfile = (req, res, next) => {
+  // const id =req.user.id//wrong user id
+  console.log("requser", req.user);//undefined
   User.findById({ _id: req.user._id })
+
     .orFail(() => new NotFoundError("No user found by that Id"))
     .then((user) => {
       res.send(user);
@@ -43,7 +46,7 @@ const createUser = (req, res, next) => {
               name: data.name,
               email: data.email,
               isAnonymous: data.isAnonymous,
-              id:data.id,
+              id: data.id,
             })
           )
 
@@ -68,7 +71,7 @@ const loginUser = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // authentication succesful user is in the variable
-
+      console.log("login-user", user);
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === "production" ? JWT_SECRET : jwtSecret,
@@ -76,6 +79,7 @@ const loginUser = (req, res, next) => {
           expiresIn: "7d",
         }
       );
+      console.log("login returned token", token);
       return res.send({ token });
     })
     .catch(() => {

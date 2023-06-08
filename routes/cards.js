@@ -12,10 +12,11 @@ const {
 const {
   validateCardBody,
   validateCardId,
-} = require("../middlewares/validation");
+} = require("../validations/validation");
 
 router.get("/", getCards);
-router.post("/create", createCard);
+
+//router.post("/create", createCard);
 
 router.delete("/:cardId", validateCardId, deleteCard);
 router.put("/:cardId/likes", likeCard);
@@ -24,3 +25,4 @@ router.put("/:cardId/bookmarks", addBookmark);
 router.delete("/:cardId/bookmarks", removeBookmark);
 
 module.exports = router;
+//can divide into 2 routes an authorized route and an unauthorized
