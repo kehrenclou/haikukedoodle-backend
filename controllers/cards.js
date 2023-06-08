@@ -87,7 +87,7 @@ const dislikeCard = (req, res, next) => {
 
 const addBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
@@ -103,7 +103,7 @@ const addBookmark = (req, res, next) => {
 
 const removeBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
+  const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
