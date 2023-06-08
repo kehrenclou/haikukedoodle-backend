@@ -43,6 +43,7 @@ const createUser = (req, res, next) => {
               name: data.name,
               email: data.email,
               isAnonymous: data.isAnonymous,
+              id:data.id,
             })
           )
 
