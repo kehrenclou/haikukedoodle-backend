@@ -21,9 +21,9 @@ const getBookmarks = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
-  const { aiId, created, choices, usage, subject, owner } = req.body;
+  const { aiId, created, choices, usage, subject, owner, terms } = req.body;
 
-  Card.create({ aiId, created, choices, usage, subject, owner: req.user._id })
+  Card.create({ aiId, created, choices, usage, subject, owner, terms })
     .then((card) => {
       res.status(201).send(card);
     })

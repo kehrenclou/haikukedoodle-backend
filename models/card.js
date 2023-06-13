@@ -36,7 +36,9 @@ const cardSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-
+  terms: {
+    type: Boolean,
+  },
   likes: {
     type: Array,
     default: [],
