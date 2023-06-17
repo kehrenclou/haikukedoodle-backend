@@ -27,14 +27,7 @@ const { PORT = 3001 } = process.env;
 mongoose.connect("mongodb://127.0.0.1/hkkd_db");
 
 /* ----------------------------------- app ---------------------------------- */
-//TODO: delete this temp user idwhen all is working
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "647ce03e3b12fb49a2e9bdce",
-//   };
-//   next();
-// });
-//
+
 app.use(cors());
 app.options("*", cors());
 

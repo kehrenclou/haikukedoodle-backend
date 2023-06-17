@@ -1,7 +1,8 @@
 const { openai } = require("../utils/openaiConfig");
+const Card = require("../models/card");
 
 const generateHaiku = async (req, res) => {
-  const { subject } = req.body;
+  const { subject, user, terms } = req.body;
 
   function generatePrompt(subject) {
     const capitalizedSubject =
@@ -21,11 +22,18 @@ const generateHaiku = async (req, res) => {
       max_tokens: 100,
       temperature: 0,
     });
-
-    res.status(200).json({
-      // response: response.data.choices[0].text,
-      response: response.data,
+    // console.log(response.data);
+    const haiku = response.data;
+    Card.create({
+      aiId: haiku.id,
+      created: haiku.created,
+      choices: haiku.choices,
+      usage: haiku.choices,
+      subject: subject,
+      // owner:user,
+      terms: terms,
     });
+    res.status(200).json(response.data);
   } catch (error) {
     if (error.response) {
       console.log(error.response.status);
