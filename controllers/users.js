@@ -4,7 +4,7 @@ const User = require("../models/user");
 
 const { NODE_ENV, JWT_SECRET } = process.env; //secret saved on server in .env file
 
-const jwtSecret = require("../utils/config"); //local secret for dev
+const { jwtSecret } = require("../utils/config"); //local secret for dev
 
 const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
@@ -15,7 +15,7 @@ const UnauthorizedError = require("../errors/unauthorized");
 
 const sendUserProfile = (req, res, next) => {
   // const id =req.user.id//wrong user id
-  console.log("requser", req.user);//undefined
+  console.log("requser", req.user); //undefined
   User.findById({ _id: req.user._id })
 
     .orFail(() => new NotFoundError("No user found by that Id"))
@@ -71,7 +71,7 @@ const loginUser = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // authentication succesful user is in the variable
-      console.log("login-user", user);
+
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === "production" ? JWT_SECRET : jwtSecret,
