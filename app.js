@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const { createUser, loginUser } = require("./controllers/users");
-const { generateHaiku, getModels } = require("./controllers/haiku");
+const { generateHaiku } = require("./controllers/openai");
 const {
   validateLoginBody,
   validateUserBody,
@@ -43,7 +43,6 @@ app.use("/users", auth, usersRouter); //if use app.use(auth don't need auth here
 app.use("/cards", cardsRouter);
 
 app.post("/openai/haiku", generateHaiku);
-app.get("/openai/models", getModels);
 
 app.use((req, res, next) => {
   next(new NotFoundError("This route does not exist"));
