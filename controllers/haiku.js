@@ -22,7 +22,8 @@ const generateHaiku = async (req, res) => {
       max_tokens: 100,
       temperature: 0,
     });
-    // console.log(response.data);
+
+
     const haiku = response.data;
     Card.create({
       aiId: haiku.id,
@@ -30,9 +31,12 @@ const generateHaiku = async (req, res) => {
       choices: haiku.choices,
       usage: haiku.choices,
       subject: subject,
-      // owner:user,
+      owner:user._id,
+      author:user.name,
       terms: terms,
     });
+
+
     res.status(200).json(response.data);
   } catch (error) {
     if (error.response) {
