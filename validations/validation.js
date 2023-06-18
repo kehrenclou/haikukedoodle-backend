@@ -46,7 +46,7 @@ const validateUserBody = celebrate({
 
 //router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     id: Joi.string().length(24),
   }),
 });

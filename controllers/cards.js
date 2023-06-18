@@ -3,8 +3,6 @@ const Card = require("../models/card");
 const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
 const ForbiddenError = require("../errors/forbidden");
-const ConflictError = require("../errors/conflict");
-const UnauthorizedError = require("../errors/unauthorized");
 
 //check and see if created status needs to be added here
 
@@ -41,21 +39,20 @@ const deleteCard = (req, res, next) => {
 
   Card.findById(cardId)
     .orFail(() => new NotFoundError("No card found with that Id"))
+
     .then((card) => {
-      if (card.owner.equals(req.user._id)) {
+      if (req.user._id.toString() === card.owner.toString()) {
         Card.findByIdAndDelete(cardId)
           .orFail(() => new BadRequestError("Cannot Delete"))
           .then((card) => res.send(card))
           .catch(next);
+      } else {
+        throw new ForbiddenError("You do not have rights to delete card");
       }
-      throw new ForbiddenError("You do not have rights to delete card");
     })
     .catch(next);
 };
 
-//TODO: logic to consolidate like and dislike functions
-//also is there a way to reuse it for bookmarks?
-//also what is new:true for
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
   const { userId } = req.body;
