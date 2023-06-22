@@ -44,6 +44,7 @@ const validateUserBody = celebrate({
 //? why not validate user Id also?//wasn't in original project
 //can these functions be combined or is it ok to have separate?
 
+//id validation not working not sure why
 //router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
   params: Joi.object().keys({

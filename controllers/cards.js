@@ -13,9 +13,18 @@ const getCards = (req, res, next) => {
 };
 
 const getBookmarks = (req, res, next) => {
-  Card.find({})
+  const { userId } = req.params;
+
+  Card.find({ bookmarks: userId })
     .then((cards) => res.send(cards))
-    .catch(next); //equivalent to .catch(err=>next(err));
+    .catch(next);
+};
+
+const getOwnerCards = (req, res, next) => {
+  const { userId } = req.params;
+  Card.find({ owner: userId })
+    .then((cards) => res.send(cards))
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -117,6 +126,7 @@ const removeBookmark = (req, res, next) => {
 module.exports = {
   getCards,
   getBookmarks,
+  getOwnerCards,
   createCard,
   deleteCard,
   likeCard,

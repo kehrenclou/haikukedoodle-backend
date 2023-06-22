@@ -2,6 +2,8 @@ const router = require("express").Router();
 const auth = require("../middlewares/auth");
 const {
   getCards,
+  getBookmarks,
+  getOwnerCards,
   createCard,
   deleteCard,
   likeCard,
@@ -13,6 +15,8 @@ const {
 const {} = require("../validations/validation");
 
 router.get("/", getCards);
+router.get("/:userId/bookmarks", getBookmarks);
+router.get("/:userId/cards", getOwnerCards);
 
 router.post("/", createCard);
 
@@ -23,4 +27,3 @@ router.put("/:cardId/bookmarks", addBookmark);
 router.delete("/:cardId/bookmarks", removeBookmark);
 
 module.exports = router;
-
