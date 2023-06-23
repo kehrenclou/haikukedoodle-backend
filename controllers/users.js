@@ -41,12 +41,19 @@ const createUser = (req, res, next) => {
           password: hash,
           isAnonymous,
         })
+
           .then((data) =>
+
             res.status(201).send({
               name: data.name,
               email: data.email,
               isAnonymous: data.isAnonymous,
-              id: data.id,
+              _id: data._id,
+              token: jwt.sign(
+                { _id: data._id },
+                NODE_ENV === "production" ? JWT_SECRET : jwtSecret,
+                { expiresIn: "7d" }
+              ),
             })
           )
 
@@ -79,7 +86,7 @@ const loginUser = (req, res, next) => {
           expiresIn: "7d",
         }
       );
-      console.log("login returned token", token);
+
       return res.send({ token });
     })
     .catch(() => {

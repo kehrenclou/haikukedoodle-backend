@@ -16,8 +16,8 @@ const {
 const {} = require("../validations/validation");
 
 router.get("/", getCards);
-router.get("/:userId/bookmarks", getBookmarks);
-router.get("/:userId/cards", getOwnerCards);
+router.get("/:userId/bookmarks", auth, getBookmarks);
+router.get("/:userId/cards", auth, getOwnerCards);
 
 router.post("/", createCard);
 router.patch("/:cardId/owner", updateCardOwner);

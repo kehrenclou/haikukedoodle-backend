@@ -30,7 +30,7 @@ const generateHaiku = async (req, res) => {
       choices: haiku.choices,
       usage: haiku.usage,
       subject: subject,
-      owner: user._id,
+      owner: user.id,//_id
       author: user.name,
       terms: terms,
     }).then((data)=>

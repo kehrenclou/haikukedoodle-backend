@@ -40,6 +40,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
     .select("password")
     .orFail()
     .then((user) => {
+
       if (!user) {
         return Promise.reject(
           new UnauthorizedError("Incorrect email or password")
