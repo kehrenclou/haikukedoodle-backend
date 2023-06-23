@@ -2,8 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
-const { NODE_ENV, JWT_SECRET } = process.env; //secret saved on server in .env file
-
 const { jwtSecret } = require("../utils/config"); //local secret for dev
 
 const BadRequestError = require("../errors/bad-request");
@@ -23,47 +21,37 @@ const sendUserProfile = (req, res, next) => {
     .catch(next);
 };
 
-const createUser = (req, res, next) => {
+const createUser = async (req, res, next) => {
   const { name, email, password, isAnonymous } = req.body;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        return next(new ConflictError("User with this email already exists"));
-      }
-
-      return bcrypt.hash(password, 10).then((hash) => {
-        User.create({
-          name,
-          email,
-          password: hash,
-          isAnonymous,
-        })
-
-          .then((data) =>
-            res.status(201).send({
-              name: data.name,
-              email: data.email,
-              isAnonymous: data.isAnonymous,
-              _id: data._id,
-              token: jwt.sign(
-                { _id: data._id },
-                NODE_ENV === "production" ? JWT_SECRET : jwtSecret,
-                { expiresIn: "7d" }
-              ),
-            })
-          )
-
-          .catch((err) => {
-            if (err.name === "ValidationError") {
-              next(new BadRequestError("Data is Invalid"));
-            } else {
-              next(err);
-            }
-          });
-      });
-    })
-    .catch(next);
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      return next(new ConflictError("User with this email already exists"));
+    }
+    const hash = await bcrypt.hash(password, 10);
+    const data = await User.create({
+      name,
+      email,
+      password: hash,
+      isAnonymous,
+    });
+    res.status(201).send({
+      name: data.name,
+      email: data.email,
+      isAnonymous: data.isAnonymous,
+      _id: data._id,
+      token: jwt.sign({ _id: data._id }, jwtSecret, {
+        expiresIn: "7d",
+      }),
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(new BadRequestError("Data is Invalid"));
+    } else {
+      next(err);
+    }
+  }
 };
 
 // gets the email and password from the request and authenticates them
@@ -76,13 +64,9 @@ const loginUser = (req, res, next) => {
     .then((user) => {
       // authentication succesful user is in the variable
 
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === "production" ? JWT_SECRET : jwtSecret,
-        {
-          expiresIn: "7d",
-        }
-      );
+      const token = jwt.sign({ _id: user._id }, jwtSecret, {
+        expiresIn: "7d",
+      });
 
       return res.send({ token });
     })

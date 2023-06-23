@@ -13,7 +13,7 @@ const {
   removeBookmark,
 } = require("../controllers/cards");
 
-const {} = require("../validations/validation");
+const { validateCardId } = require("../validations/validation");
 
 router.get("/", getCards);
 router.get("/:userId/bookmarks", auth, getBookmarks);
@@ -23,9 +23,9 @@ router.post("/", createCard);
 router.patch("/:cardId/owner", updateCardOwner);
 
 router.delete("/:cardId/delete", auth, deleteCard);
-router.put("/:cardId/likes", likeCard);
-router.delete("/:cardId/likes", dislikeCard);
-router.put("/:cardId/bookmarks", addBookmark);
-router.delete("/:cardId/bookmarks", removeBookmark);
+router.put("/:cardId/likes", validateCardId, likeCard);
+router.delete("/:cardId/likes", validateCardId, dislikeCard);
+router.put("/:cardId/bookmarks", validateCardId, addBookmark);
+router.delete("/:cardId/bookmarks", validateCardId, removeBookmark);
 
 module.exports = router;

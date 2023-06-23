@@ -24,16 +24,18 @@ const generateHaiku = async (req, res) => {
     });
 
     const haiku = response.data;
-    Card.create({
+
+    const data = await Card.create({
       aiId: haiku.id,
       created: haiku.created,
       choices: haiku.choices,
       usage: haiku.usage,
       subject: subject,
-      owner: user._id, //_id
+      owner: user._id,
       author: user.name,
       terms: terms,
-    }).then((data) => res.status(201).send(data));
+    });
+    res.status(201).send(data);
     
   } catch (error) {
     if (error.response) {

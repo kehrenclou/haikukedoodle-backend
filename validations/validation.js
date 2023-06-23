@@ -34,7 +34,7 @@ const validateUserBody = celebrate({
       "string.required": "The email field must be filled in',",
     }),
     password: Joi.string().required().messages({
-      "string.reuipred": "The password field must be filled in",
+      "string.requipred": "The password field must be filled in",
     }),
   }),
 });
@@ -48,7 +48,7 @@ const validateUserBody = celebrate({
 //router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24),
+    cardId: Joi.string().length(24),
   }),
 });
 
