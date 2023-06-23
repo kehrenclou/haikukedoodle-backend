@@ -14,8 +14,6 @@ const UnauthorizedError = require("../errors/unauthorized");
 //check and see if created status needs to be added here
 
 const sendUserProfile = (req, res, next) => {
-  // const id =req.user.id//wrong user id
-  console.log("requser", req.user); //undefined
   User.findById({ _id: req.user._id })
 
     .orFail(() => new NotFoundError("No user found by that Id"))
@@ -43,7 +41,6 @@ const createUser = (req, res, next) => {
         })
 
           .then((data) =>
-
             res.status(201).send({
               name: data.name,
               email: data.email,

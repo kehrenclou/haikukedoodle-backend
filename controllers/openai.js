@@ -30,14 +30,11 @@ const generateHaiku = async (req, res) => {
       choices: haiku.choices,
       usage: haiku.usage,
       subject: subject,
-      owner: user.id,//_id
+      owner: user._id, //_id
       author: user.name,
       terms: terms,
-    }).then((data)=>
-    res.status(201).send(data))
-//somehow need to get card id returned here
-    // res.status(200).json(response.data);//this works
-
+    }).then((data) => res.status(201).send(data));
+    
   } catch (error) {
     if (error.response) {
       console.log(error.response.status);
