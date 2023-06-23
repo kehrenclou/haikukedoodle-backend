@@ -5,6 +5,7 @@ const {
   getBookmarks,
   getOwnerCards,
   createCard,
+  updateCardOwner,
   deleteCard,
   likeCard,
   dislikeCard,
@@ -19,6 +20,7 @@ router.get("/:userId/bookmarks", getBookmarks);
 router.get("/:userId/cards", getOwnerCards);
 
 router.post("/", createCard);
+router.patch("/:cardId/owner", updateCardOwner);
 
 router.delete("/:cardId/delete", auth, deleteCard);
 router.put("/:cardId/likes", likeCard);

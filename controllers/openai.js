@@ -33,9 +33,11 @@ const generateHaiku = async (req, res) => {
       owner: user._id,
       author: user.name,
       terms: terms,
-    });
+    }).then((data)=>
+    res.status(201).send(data))
+//somehow need to get card id returned here
+    // res.status(200).json(response.data);//this works
 
-    res.status(200).json(response.data);
   } catch (error) {
     if (error.response) {
       console.log(error.response.status);

@@ -42,6 +42,22 @@ const createCard = (req, res, next) => {
       }
     });
 };
+const updateCardOwner = (req, res, next) => {
+  const { owner, author } = req.body;
+  const { cardId } = req.params;
+
+  Card.findByIdAndUpdate(cardId, { owner, author }, { new: true })
+    .orFail(() => new NotFoundError("No card found with that Id'"))
+    .then((card) =>
+      res.send(card))
+      .catch((err)=>{
+        if(err.name==='CastError'){
+          next(new BadRequestError('Invalid Card Id'));
+        }else {
+          next(err);
+        }
+      })
+};
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
@@ -128,6 +144,7 @@ module.exports = {
   getBookmarks,
   getOwnerCards,
   createCard,
+  updateCardOwner,
   deleteCard,
   likeCard,
   dislikeCard,
