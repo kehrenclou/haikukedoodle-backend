@@ -11,6 +11,11 @@ const getCards = (req, res, next) => {
     .then((cards) => res.send(cards))
     .catch(next); //equivalent to .catch(err=>next(err));
 };
+const getCardsLimit = (req, res, next) => {
+  Card.find({}).limit(5).exec()
+    .then((cards) => res.send(cards))
+    .catch(next); //equivalent to .catch(err=>next(err));
+};
 
 const getBookmarks = (req, res, next) => {
   const { userId } = req.params;
@@ -141,6 +146,7 @@ const removeBookmark = (req, res, next) => {
 };
 module.exports = {
   getCards,
+  getCardsLimit,
   getBookmarks,
   getOwnerCards,
   createCard,
