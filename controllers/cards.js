@@ -4,13 +4,22 @@ const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
 const ForbiddenError = require("../errors/forbidden");
 
-const getCards = (req, res, next) => {
-  Card.find({})
-    .limit(6)
-    .exec()
-    .then((cards) => res.send(cards))
-    .catch(next);
+const getCards = async (req, res, next) => {
+  try {
+    const response = await Card.find({}).limit(6).exec();
+    const cardCount = await Card.estimatedDocumentCount();
+    res.send({ cards: response, cardCount: cardCount });
+  } catch (err) {
+    if (err.response) {
+      console.log(err.response.status);
+      console.log(err.response.data);
+    } else {
+      next(err);
+    }
+  }
 };
+
+
 const loadMoreCards = (req, res, next) => {
   const { cardSkip } = req.params;
   Card.find({})
@@ -18,7 +27,7 @@ const loadMoreCards = (req, res, next) => {
     .skip(cardSkip)
     .exec()
     .then((cards) => res.send(cards))
-    .catch(next); 
+    .catch(next);
 };
 
 const getBookmarks = (req, res, next) => {
