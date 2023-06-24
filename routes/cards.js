@@ -2,7 +2,7 @@ const router = require("express").Router();
 const auth = require("../middlewares/auth");
 const {
   getCards,
-  getCardsLimit,
+ loadMoreCards,
   getBookmarks,
   getOwnerCards,
   createCard,
@@ -16,7 +16,8 @@ const {
 
 const { validateCardId } = require("../validations/validation");
 
-router.get("/", getCardsLimit);
+router.get("/", getCards);
+router.get("/:cardSkip", loadMoreCards);
 router.get("/:userId/bookmarks", auth, getBookmarks);
 router.get("/:userId/cards", auth, getOwnerCards);
 

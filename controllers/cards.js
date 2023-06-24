@@ -4,17 +4,21 @@ const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
 const ForbiddenError = require("../errors/forbidden");
 
-//check and see if created status needs to be added here
-
 const getCards = (req, res, next) => {
   Card.find({})
+    .limit(6)
+    .exec()
     .then((cards) => res.send(cards))
-    .catch(next); //equivalent to .catch(err=>next(err));
+    .catch(next);
 };
-const getCardsLimit = (req, res, next) => {
-  Card.find({}).limit(5).exec()
+const loadMoreCards = (req, res, next) => {
+  const { cardSkip } = req.params;
+  Card.find({})
+    .limit(6)
+    .skip(cardSkip)
+    .exec()
     .then((cards) => res.send(cards))
-    .catch(next); //equivalent to .catch(err=>next(err));
+    .catch(next); 
 };
 
 const getBookmarks = (req, res, next) => {
@@ -53,15 +57,14 @@ const updateCardOwner = (req, res, next) => {
 
   Card.findByIdAndUpdate(cardId, { owner, author }, { new: true })
     .orFail(() => new NotFoundError("No card found with that Id'"))
-    .then((card) =>
-      res.send(card))
-      .catch((err)=>{
-        if(err.name==='CastError'){
-          next(new BadRequestError('Invalid Card Id'));
-        }else {
-          next(err);
-        }
-      })
+    .then((card) => res.send(card))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        next(new BadRequestError("Invalid Card Id"));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteCard = (req, res, next) => {
@@ -146,7 +149,7 @@ const removeBookmark = (req, res, next) => {
 };
 module.exports = {
   getCards,
-  getCardsLimit,
+  loadMoreCards,
   getBookmarks,
   getOwnerCards,
   createCard,
