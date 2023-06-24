@@ -19,7 +19,6 @@ const getCards = async (req, res, next) => {
   }
 };
 
-
 const loadMoreCards = (req, res, next) => {
   const { cardSkip } = req.params;
   Card.find({})
@@ -30,13 +29,28 @@ const loadMoreCards = (req, res, next) => {
     .catch(next);
 };
 
-const getBookmarks = (req, res, next) => {
+const getBookmarks = async (req, res, next) => {
   const { userId } = req.params;
-
-  Card.find({ bookmarks: userId })
-    .then((cards) => res.send(cards))
-    .catch(next);
+  try {
+    const bookmarks = await Card.find({ bookmarks: userId });
+    res.send(bookmarks);
+  } catch (err) {
+    if (err.response) {
+      console.log(err.response.statues);
+      console.log(err.response.data);
+    } else {
+      next(err);
+    }
+  }
 };
+
+// const getBookmarks = (req, res, next) => {
+//   const { userId } = req.params;
+
+//   Card.find({ bookmarks: userId })
+//     .then((cards) => res.send(cards))
+//     .catch(next);
+// };
 
 const getOwnerCards = (req, res, next) => {
   const { userId } = req.params;
