@@ -2,9 +2,11 @@ const router = require("express").Router();
 const auth = require("../middlewares/auth");
 const {
   getCards,
- loadMoreCards,
+  loadMoreCards,
   getBookmarks,
+  loadMoreBookmarks,
   getOwnerCards,
+  loadMoreOwnerCards,
   createCard,
   updateCardOwner,
   deleteCard,
@@ -18,8 +20,12 @@ const { validateCardId } = require("../validations/validation");
 
 router.get("/", getCards);
 router.get("/:cardSkip", loadMoreCards);
+
 router.get("/:userId/bookmarks", auth, getBookmarks);
+router.get("/:cardSkip/:userId/bookmarks", auth, loadMoreBookmarks);
+
 router.get("/:userId/cards", auth, getOwnerCards);
+router.get("/:cardSkip/:userId/cards",auth, loadMoreOwnerCards )
 
 router.post("/", createCard);
 router.patch("/:cardId/owner", updateCardOwner);

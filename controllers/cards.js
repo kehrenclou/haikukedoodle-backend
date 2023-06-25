@@ -28,12 +28,20 @@ const loadMoreCards = (req, res, next) => {
     .then((cards) => res.send(cards))
     .catch(next);
 };
+// const getBookmarks = (req, res, next) => {
+//   const { userId } = req.params;
 
+//   Card.find({ bookmarks: userId })
+//   .limit(6)
+//     .then((cards) => res.send(cards))
+//     .catch(next);
+// };
 const getBookmarks = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const bookmarks = await Card.find({ bookmarks: userId });
-    res.send(bookmarks);
+    const bookmarks = await Card.find({ bookmarks: userId }).limit(6).exec();
+    const cardCount = await Card.countDocuments({ bookmarks: { $in: userId } });
+    res.send({ bookmarks: bookmarks, cardCount: cardCount });
   } catch (err) {
     if (err.response) {
       console.log(err.response.statues);
@@ -43,18 +51,45 @@ const getBookmarks = async (req, res, next) => {
     }
   }
 };
+const loadMoreBookmarks = (req, res, next) => {
+  const { cardSkip, userId } = req.params;
 
-// const getBookmarks = (req, res, next) => {
+  Card.find({ bookmarks: userId })
+    .limit(6)
+    .skip(cardSkip)
+    .exec()
+    .then((cards) => res.send(cards))
+    .catch(next);
+};
+
+// const getOwnerCards = (req, res, next) => {
 //   const { userId } = req.params;
-
-//   Card.find({ bookmarks: userId })
+//   Card.find({ owner: userId })
 //     .then((cards) => res.send(cards))
 //     .catch(next);
 // };
-
-const getOwnerCards = (req, res, next) => {
+const getOwnerCards = async (req, res, next) => {
   const { userId } = req.params;
+  try {
+    const ownerCards = await Card.find({ owner: userId }).limit(6).exec();
+    const cardCount = await Card.countDocuments({ owner: { $in: userId } });
+    res.send({ ownerCards: ownerCards, cardCount: cardCount });
+  } catch (err) {
+    if (err.response) {
+      console.log(err.response.statues);
+      console.log(err.response.data);
+    } else {
+      next(err);
+    }
+  }
+};
+const loadMoreOwnerCards = (req, res, next) => {
+  const { cardSkip, userId } = req.params;
+
   Card.find({ owner: userId })
+    .limit(6)
+    .skip(cardSkip)
+    .exec()
     .then((cards) => res.send(cards))
     .catch(next);
 };
@@ -174,7 +209,9 @@ module.exports = {
   getCards,
   loadMoreCards,
   getBookmarks,
+  loadMoreBookmarks,
   getOwnerCards,
+  loadMoreOwnerCards,
   createCard,
   updateCardOwner,
   deleteCard,
