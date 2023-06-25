@@ -21,7 +21,7 @@ const {
 const auth = require("./middlewares/auth");
 
 const NotFoundError = require("./errors/not-found");
-const errorHandler = require("./middlewares/error-handler");
+const errorHandler = require("./middlewares/errorHandler");
 
 /* -------------------------- declare app and port -------------------------- */
 const app = express();

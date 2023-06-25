@@ -8,6 +8,7 @@ const getCards = async (req, res, next) => {
   try {
     const response = await Card.find({}).limit(6).sort({ created: -1 }).exec();
     const cardCount = await Card.estimatedDocumentCount();
+
     res.send({ cards: response, cardCount: cardCount });
   } catch (err) {
     if (err.response) {
@@ -105,6 +106,7 @@ const createCard = (req, res, next) => {
       }
     });
 };
+
 const updateCardOwner = (req, res, next) => {
   const { owner, author } = req.body;
   const { cardId } = req.params;
@@ -201,6 +203,7 @@ const removeBookmark = (req, res, next) => {
     })
     .catch(next);
 };
+
 module.exports = {
   getCards,
   loadMoreCards,
