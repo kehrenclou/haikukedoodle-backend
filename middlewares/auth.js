@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized');
 const {jwtSecret} = require('../utils/config');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+
 
 // verify token from headers
 // if token ok, middleware should add token payload to the user object and call next()
@@ -19,7 +19,8 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      NODE_ENV === 'production' ? JWT_SECRET : jwtSecret,
+      jwtSecret,
+
     );
   } catch (err) {
     throw new UnauthorizedError('Unauthorized');

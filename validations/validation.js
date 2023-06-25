@@ -1,13 +1,6 @@
 const { celebrate, Joi } = require("celebrate");
 
-//functions to define
-//card body when card create
-//user body when user is created
-//authentication when user logs in
-//user and card item ids when they are accessed
-//?how to validate ai
-//?new ai item body
-//?validate headers or req.query?
+
 
 //app.post('login',validateLoginboday,loginUser);
 const validateLoginBody = celebrate({
