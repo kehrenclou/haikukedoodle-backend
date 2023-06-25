@@ -1,15 +1,15 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 
-const BadRequestError = require("../errors/bad-request");
-const NotFoundError = require("../errors/not-found");
-const ForbiddenError = require("../errors/forbidden");
+const BadRequestError = require('../errors/bad-request');
+const NotFoundError = require('../errors/not-found');
+const ForbiddenError = require('../errors/forbidden');
 
 const getCards = async (req, res, next) => {
   try {
     const response = await Card.find({}).limit(6).sort({ created: -1 }).exec();
     const cardCount = await Card.estimatedDocumentCount();
 
-    res.send({ cards: response, cardCount: cardCount });
+    res.send({ cards: response, cardCount });
   } catch (err) {
     if (err.response) {
       console.log(err.response.status);
@@ -39,7 +39,7 @@ const getBookmarks = async (req, res, next) => {
       .sort({ created: -1 })
       .exec();
     const cardCount = await Card.countDocuments({ bookmarks: { $in: userId } });
-    res.send({ bookmarks: bookmarks, cardCount: cardCount });
+    res.send({ bookmarks, cardCount });
   } catch (err) {
     if (err.response) {
       console.log(err.response.statues);
@@ -69,7 +69,7 @@ const getOwnerCards = async (req, res, next) => {
       .sort({ created: -1 })
       .exec();
     const cardCount = await Card.countDocuments({ owner: { $in: userId } });
-    res.send({ ownerCards: ownerCards, cardCount: cardCount });
+    res.send({ ownerCards, cardCount });
   } catch (err) {
     if (err.response) {
       console.log(err.response.statues);
@@ -92,15 +92,25 @@ const loadMoreOwnerCards = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
-  const { aiId, created, choices, usage, subject, owner, terms } = req.body;
+  const {
+    aiId, created, choices, usage, subject, owner, terms,
+  } = req.body;
 
-  Card.create({ aiId, created, choices, usage, subject, owner, terms })
+  Card.create({
+    aiId,
+    created,
+    choices,
+    usage,
+    subject,
+    owner,
+    terms,
+  })
     .then((card) => {
       res.status(201).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(new BadRequestError("Data not valid"));
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Data not valid'));
       } else {
         next(err);
       }
@@ -115,8 +125,8 @@ const updateCardOwner = (req, res, next) => {
     .orFail(() => new NotFoundError("No card found with that Id'"))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === "CastError") {
-        next(new BadRequestError("Invalid Card Id"));
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Invalid Card Id'));
       } else {
         next(err);
       }
@@ -127,16 +137,16 @@ const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findById(cardId)
-    .orFail(() => new NotFoundError("No card found with that Id"))
+    .orFail(() => new NotFoundError('No card found with that Id'))
 
     .then((card) => {
       if (req.user._id.toString() === card.owner.toString()) {
         Card.findByIdAndDelete(cardId)
-          .orFail(() => new BadRequestError("Cannot Delete"))
-          .then((card) => res.send(card))
+          .orFail(() => new BadRequestError('Cannot Delete'))
+          .then((data) => res.send(data))
           .catch(next);
       } else {
-        throw new ForbiddenError("You do not have rights to delete card");
+        throw new ForbiddenError('You do not have rights to delete card');
       }
     })
     .catch(next);
@@ -149,9 +159,9 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
-    { new: true }
+    { new: true },
   )
-    .orFail(() => new NotFoundError("No card found with that Id"))
+    .orFail(() => new NotFoundError('No card found with that Id'))
     .then((card) => {
       res.send(card);
     })
@@ -163,7 +173,7 @@ const dislikeCard = (req, res, next) => {
   const { userId } = req.body;
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
-    .orFail(() => new NotFoundError("No card found with that Id"))
+    .orFail(() => new NotFoundError('No card found with that Id'))
 
     .then((card) => {
       res.send(card);
@@ -178,9 +188,9 @@ const addBookmark = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { bookmarks: req.user._id } },
-    { new: true }
+    { new: true },
   )
-    .orFail(() => new NotFoundError("No card found with that Id"))
+    .orFail(() => new NotFoundError('No card found with that Id'))
     .then((card) => {
       res.send(card);
     })
@@ -194,9 +204,9 @@ const removeBookmark = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { bookmarks: req.user._id } },
-    { new: true }
+    { new: true },
   )
-    .orFail(() => new NotFoundError("No card found with that Id"))
+    .orFail(() => new NotFoundError('No card found with that Id'))
 
     .then((card) => {
       res.send(card);

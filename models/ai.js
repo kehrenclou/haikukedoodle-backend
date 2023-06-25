@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose');
 
 const aiSchema = new mongoose.Schema({
   aiId: {
@@ -24,4 +23,4 @@ const aiSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("ai", aiSchema);
+module.exports = mongoose.model('ai', aiSchema);

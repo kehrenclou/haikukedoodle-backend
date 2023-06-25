@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized');
-const {jwtSecret} = require('../utils/config');
-
-
+const { jwtSecret } = require('../utils/config');
 
 // verify token from headers
 // if token ok, middleware should add token payload to the user object and call next()

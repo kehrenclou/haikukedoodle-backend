@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
   aiId: {
@@ -26,9 +26,9 @@ const cardSchema = new mongoose.Schema({
 
   subject: {
     type: String,
-    required: [true, "The name field must be filled in"],
-    minlength: [2, "The minimum length of the name field is 2"],
-    maxlength: [30, "The maximum length of the name field is 3"],
+    required: [true, 'The name field must be filled in'],
+    minlength: [2, 'The minimum length of the name field is 2'],
+    maxlength: [30, 'The maximum length of the name field is 3'],
   },
 
   owner: {
@@ -54,4 +54,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("card", cardSchema);
+module.exports = mongoose.model('card', cardSchema);
