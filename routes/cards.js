@@ -16,7 +16,7 @@ const {
   removeBookmark,
 } = require("../controllers/cards");
 
-const { validateCardId } = require("../validations/validation");
+const { validateCardId, validateCardBody } = require("../validations/validation");
 
 router.get("/", getCards);
 router.get("/:cardSkip", loadMoreCards);
@@ -27,7 +27,7 @@ router.get("/:cardSkip/:userId/bookmarks", auth, loadMoreBookmarks);
 router.get("/:userId/cards", auth, getOwnerCards);
 router.get("/:cardSkip/:userId/cards",auth, loadMoreOwnerCards )
 
-router.post("/", createCard);
+router.post("/", validateCardBody,createCard);
 router.patch("/:cardId/owner", updateCardOwner);
 
 router.delete("/:cardId/delete", auth, deleteCard);

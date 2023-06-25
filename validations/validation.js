@@ -1,7 +1,5 @@
 const { celebrate, Joi } = require("celebrate");
 
-
-
 //app.post('login',validateLoginboday,loginUser);
 const validateLoginBody = celebrate({
   body: Joi.object().keys({
@@ -34,11 +32,31 @@ const validateUserBody = celebrate({
 
 //router.post('/create',validateCardBody,createCard)
 
-//? why not validate user Id also?//wasn't in original project
-//can these functions be combined or is it ok to have separate?
+const validateCardBody = celebrate({
+  body: Joi.object().keys({
+    aiId: Joi.string().required().messages({
+      "string.empty": "no AI id",
+    }),
+    created: Joi.number().required().messages({
+      "number.empty": "no created number",
+    }),
+    choices: Joi.array(),
+    usage: Joi.object(),
+    subject: Joi.string().required().messages({
+      "string.empty": "Subject field must be filled.",
+    }),
+    owner: Joi.string().required().messages({
+      "owner.empty": "Owner field is required",
+    }),
+    author: Joi.string().required().messages({
+      "owner.empty": "Author field is required",
+    }),
+    terms: Joi.boolean(),
+    likes: Joi.array(),
+    bookmarks: Joi.array(),
+  }),
+});
 
-//id validation not working not sure why
-//router.delete("/:cardId,deleteCard")
 const validateCardId = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24),
@@ -50,4 +68,10 @@ const validateUserId = celebrate({
     id: Joi.string().length(24),
   }),
 });
-module.exports = { validateLoginBody, validateUserBody, validateCardId, validateUserId };
+module.exports = {
+  validateLoginBody,
+  validateUserBody,
+  validateCardBody,
+  validateCardId,
+  validateUserId,
+};

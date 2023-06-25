@@ -28,14 +28,7 @@ const loadMoreCards = (req, res, next) => {
     .then((cards) => res.send(cards))
     .catch(next);
 };
-// const getBookmarks = (req, res, next) => {
-//   const { userId } = req.params;
 
-//   Card.find({ bookmarks: userId })
-//   .limit(6)
-//     .then((cards) => res.send(cards))
-//     .catch(next);
-// };
 const getBookmarks = async (req, res, next) => {
   const { userId } = req.params;
   try {
@@ -62,12 +55,6 @@ const loadMoreBookmarks = (req, res, next) => {
     .catch(next);
 };
 
-// const getOwnerCards = (req, res, next) => {
-//   const { userId } = req.params;
-//   Card.find({ owner: userId })
-//     .then((cards) => res.send(cards))
-//     .catch(next);
-// };
 const getOwnerCards = async (req, res, next) => {
   const { userId } = req.params;
   try {
