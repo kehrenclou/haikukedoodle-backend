@@ -173,11 +173,11 @@ const dislikeCard = (req, res, next) => {
 
 const addBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.body;
+  // const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
-    { $addToSet: { bookmarks: userId } },
+    { $addToSet: { bookmarks: req.user._id } },
     { new: true }
   )
     .orFail(() => new NotFoundError("No card found with that Id"))
@@ -189,11 +189,11 @@ const addBookmark = (req, res, next) => {
 
 const removeBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.body;
+  // const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
-    { $pull: { bookmarks: userId } },
+    { $pull: { bookmarks: req.user._id } },
     { new: true }
   )
     .orFail(() => new NotFoundError("No card found with that Id"))
