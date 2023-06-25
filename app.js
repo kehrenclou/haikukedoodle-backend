@@ -6,20 +6,21 @@ const helmet = require("helmet");
 const cors = require("cors");
 const { errors } = require("celebrate");
 const { limiter } = require("./utils/rate-limit-config");
-
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
+
+const usersRouter = require("./routes/users");
+const cardsRouter = require("./routes/cards");
+
 const {
   validateLoginBody,
   validateUserBody,
 } = require("./validations/validation");
 const auth = require("./middlewares/auth");
-const usersRouter = require("./routes/users");
-const cardsRouter = require("./routes/cards");
 
 const NotFoundError = require("./errors/not-found");
-const { createCard } = require("./controllers/cards");
 
 /* -------------------------- declare app and port -------------------------- */
 const app = express();
@@ -40,11 +41,10 @@ app.use(express.urlencoded({ extended: false }));
 //routes
 app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
+app.post("/openai/haiku", generateHaiku);
 
 app.use("/users", auth, usersRouter);
 app.use("/cards", cardsRouter);
-
-app.post("/openai/haiku", generateHaiku);
 
 app.use((req, res, next) => {
   next(new NotFoundError("This route does not exist"));
