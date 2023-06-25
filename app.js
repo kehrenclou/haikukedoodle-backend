@@ -37,9 +37,8 @@ app.use(express.urlencoded({ extended: false }));
 //routes
 app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
-// app.post("/cards/create", createCard); // AUth Free
-//app.use(auth)//every route would need authentication
-app.use("/users", auth, usersRouter); //if use app.use(auth don't need auth here)
+
+app.use("/users", auth, usersRouter);
 app.use("/cards", cardsRouter);
 
 app.post("/openai/haiku", generateHaiku);

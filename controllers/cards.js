@@ -6,7 +6,7 @@ const ForbiddenError = require("../errors/forbidden");
 
 const getCards = async (req, res, next) => {
   try {
-    const response = await Card.find({}).limit(6).exec();
+    const response = await Card.find({}).limit(6).sort({ created: -1 }).exec();
     const cardCount = await Card.estimatedDocumentCount();
     res.send({ cards: response, cardCount: cardCount });
   } catch (err) {
@@ -24,6 +24,7 @@ const loadMoreCards = (req, res, next) => {
   Card.find({})
     .limit(6)
     .skip(cardSkip)
+    .sort({ created: -1 })
     .exec()
     .then((cards) => res.send(cards))
     .catch(next);
@@ -32,7 +33,10 @@ const loadMoreCards = (req, res, next) => {
 const getBookmarks = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const bookmarks = await Card.find({ bookmarks: userId }).limit(6).exec();
+    const bookmarks = await Card.find({ bookmarks: userId })
+      .limit(6)
+      .sort({ created: -1 })
+      .exec();
     const cardCount = await Card.countDocuments({ bookmarks: { $in: userId } });
     res.send({ bookmarks: bookmarks, cardCount: cardCount });
   } catch (err) {
@@ -50,6 +54,7 @@ const loadMoreBookmarks = (req, res, next) => {
   Card.find({ bookmarks: userId })
     .limit(6)
     .skip(cardSkip)
+    .sort({ created: -1 })
     .exec()
     .then((cards) => res.send(cards))
     .catch(next);
@@ -58,7 +63,10 @@ const loadMoreBookmarks = (req, res, next) => {
 const getOwnerCards = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const ownerCards = await Card.find({ owner: userId }).limit(6).exec();
+    const ownerCards = await Card.find({ owner: userId })
+      .limit(6)
+      .sort({ created: -1 })
+      .exec();
     const cardCount = await Card.countDocuments({ owner: { $in: userId } });
     res.send({ ownerCards: ownerCards, cardCount: cardCount });
   } catch (err) {
@@ -76,6 +84,7 @@ const loadMoreOwnerCards = (req, res, next) => {
   Card.find({ owner: userId })
     .limit(6)
     .skip(cardSkip)
+    .sort({ created: -1 })
     .exec()
     .then((cards) => res.send(cards))
     .catch(next);
