@@ -1,10 +1,12 @@
-//backend/app.js
-// const path = require('path')
 require("dotenv").config(); //moved to openai config
 
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const cors = require("cors");
+const { errors } = require("celebrate");
+const { limiter } = require("./utils/rate-limit-config");
+
 
 const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
@@ -27,7 +29,8 @@ const { PORT = 3001 } = process.env;
 mongoose.connect("mongodb://127.0.0.1/hkkd_db");
 
 /* ----------------------------------- app ---------------------------------- */
-
+app.use(limiter); //applies to all requests
+app.use(helmet());
 app.use(cors());
 app.options("*", cors());
 
@@ -46,6 +49,8 @@ app.post("/openai/haiku", generateHaiku);
 app.use((req, res, next) => {
   next(new NotFoundError("This route does not exist"));
 });
+
+app.use(errors()); //celebrate
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
