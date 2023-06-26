@@ -1,7 +1,7 @@
 const { openai } = require('../utils/openaiConfig');
 const Card = require('../models/card');
 
-const generateHaiku = async (req, res) => {
+const generateHaiku = async (req, res, next) => {
   const { subject, user, terms } = req.body;
 
   function generatePrompt(sub) {
@@ -34,7 +34,7 @@ const generateHaiku = async (req, res) => {
       author: user.name,
       terms,
     });
-    res.status(201).send(data);
+    return res.status(201).send(data);
   } catch (error) {
     if (error.response) {
       console.log(error.response.status);
@@ -42,6 +42,7 @@ const generateHaiku = async (req, res) => {
     } else {
       console.log(error.message);
     }
+    return next(error);
   }
 };
 

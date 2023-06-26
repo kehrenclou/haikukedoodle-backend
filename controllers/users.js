@@ -48,10 +48,9 @@ const createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      next(new BadRequestError('Data is Invalid'));
-    } else {
-      next(err);
+      return next(new BadRequestError('Data is Invalid'));
     }
+    return next(err);
   }
 };
 
