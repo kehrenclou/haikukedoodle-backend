@@ -53,7 +53,7 @@ app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
 app.post("/openai/haiku", generateHaiku);
 
-app.use("/users", usersRouter);
+app.use("/users", auth, usersRouter);
 app.use("/cards", cardsRouter);
 
 app.use((req, res, next) => {
