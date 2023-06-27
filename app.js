@@ -7,7 +7,6 @@ const cors = require("cors");
 const { errors } = require("celebrate");
 const { limiter } = require("./utils/rate-limit-config");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const { allowedCors, DEFAULT_ALLOWED_METHODS } = require("./utils/corsConfig");
 
 const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
@@ -34,39 +33,11 @@ mongoose.connect("mongodb://127.0.0.1/hkkd_db");
 /* ----------------------------------- app ---------------------------------- */
 app.use(limiter); // applies to all requests
 app.use(helmet());
-// app.use(cors());
-// app.options("*", cors());
+app.use(cors());
+app.options("*", cors());
 
 app.use(express.json()); // versions express >4.16 can use this instead of bodyparser
 app.use(express.urlencoded({ extended: false }));
-// include these before other routes
-app.use((req, res, next) => {
-  const { origin } = req.headers; // saving the request source to the 'origin' variable
-  // checking that the source of the request is mentioned in the list of allowed ones
-  if (allowedCors.includes(origin)) {
-    // setting a header that allows the browser to make requests from this source
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  // setting a header that allows the browser to make requests from any source
-  res.header("Access-Control-Allow-Origin", "*");
-  const { method } = req; // Saving the request type (HTTP method) to the corresponding variable
-
-  // If this is a preliminary request, add the required headers
-  if (method === "OPTIONS") {
-    // allowing cross-domain requests of any type (default)
-    res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
-  }
-  // saving the list of headers of the original request
-  const requestHeaders = req.headers["access-control-request-headers"];
-  if (method === "OPTIONS") {
-    // allowing cross-domain requests with these headers
-    res.header("Access-Control-Allow-Headers", requestHeaders);
-    // finish processing the request and return the result to the client
-    return res.end();
-  }
-
-  return next();
-});
 
 app.use(requestLogger);
 
