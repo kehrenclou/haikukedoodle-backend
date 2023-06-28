@@ -14,6 +14,7 @@ All Users will be able to download and like the haikus.
 # local deployment:
 - back-end: npm run start (deploys: http://localhost:3001)
 - live site: http://www.haikukedoodle.com
+- backend: api.haikukedoodle.com
 
 ## Technologies Used
 - Javascript
