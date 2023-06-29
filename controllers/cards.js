@@ -93,7 +93,7 @@ const loadMoreOwnerCards = (req, res, next) => {
 
 const createCard = (req, res, next) => {
   const {
-    aiId, created, choices, usage, subject, owner, terms,
+    aiId, created, choices, usage, subject, owner, author, terms,
   } = req.body;
 
   Card.create({
@@ -103,6 +103,7 @@ const createCard = (req, res, next) => {
     usage,
     subject,
     owner,
+    author,
     terms,
   })
     .then((card) => {

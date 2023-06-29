@@ -1,8 +1,7 @@
-const { NODE_ENV, JWT_SECRET } = process.env; // secret saved on server in .env file
+const { NODE_ENV, JWT_SECRET, DB_ADDRESS } = process.env; // secret saved on server in .env file
 const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : '1234';
+// add the db address
 const openaiKey = process.env.OPENAI_API_KEY;
-// NODE_ENV === "production"
-//   ? REACT_APP_OPENAI_API_KEY
-//   : process.env.REACT_APP_OPENAI_API_KEY;
-
-module.exports = { jwtSecret, openaiKey };
+const dbAddress = NODE_ENV === 'production' ? DB_ADDRESS : 'mongodb://127.0.0.1/hkkd_db';
+//add address to env file
+module.exports = { jwtSecret, openaiKey, dbAddress };
