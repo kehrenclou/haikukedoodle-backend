@@ -42,7 +42,7 @@ const getBookmarks = async (req, res, next) => {
     res.send({ bookmarks, cardCount });
   } catch (err) {
     if (err.response) {
-      console.log(err.response.statues);
+      console.log(err.response.status);
       console.log(err.response.data);
     } else {
       next(err);
