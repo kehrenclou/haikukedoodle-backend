@@ -21,20 +21,20 @@ const {
   validateCardBody,
 } = require('../validations/validation');
 
-router.get('/', getCards); // avail to anonymous no auth
-router.get('/:cardSkip', loadMoreCards); // avail to anonymous no auth
+router.get('/', getCards);
+router.get('/:cardSkip', loadMoreCards);
 
 router.get('/:userId/bookmarks', auth, getBookmarks);
-router.get('/:cardSkip/:userId/bookmarks', auth, loadMoreBookmarks);
+router.get('/:cardSkip/:userId/bookmarks',auth,  loadMoreBookmarks);
 
 router.get('/:userId/cards', auth, getOwnerCards);
 router.get('/:cardSkip/:userId/cards', auth, loadMoreOwnerCards);
 
-router.post('/', validateCardBody, createCard); // avail to anonymous no auth
-router.patch('/:cardId/owner', validateCardId, updateCardOwner);
+router.post('/', auth,validateCardBody, createCard);
+router.patch('/:cardId/owner', auth,validateCardId, updateCardOwner);
 
-router.put('/:cardId/likes', validateCardId, likeCard); // avail to anonymous no auth
-router.delete('/:cardId/likes', validateCardId, dislikeCard); // avail to anonymous no auth
+router.put('/:cardId/likes', auth,validateCardId, likeCard);
+router.delete('/:cardId/likes',auth, validateCardId, dislikeCard);
 
 router.put('/:cardId/bookmarks', auth, validateCardId, addBookmark);
 router.delete('/:cardId/bookmarks', auth, validateCardId, removeBookmark);

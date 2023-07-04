@@ -12,16 +12,15 @@ const { dbAddress } = require("./utils/config");
 const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
 
-const usersRouter = require("./routes/users");
-const cardsRouter = require("./routes/cards");
+const routes = require("./routes");
+
 
 const {
   validateLoginBody,
   validateUserBody,
 } = require("./validations/validation");
-const auth = require("./middlewares/auth");
 
-const NotFoundError = require("./errors/not-found");
+
 const errorHandler = require("./middlewares/errorHandler");
 
 /* -------------------------- declare app and port -------------------------- */
@@ -48,19 +47,12 @@ app.use(express.urlencoded({ extended: false }));
 //   }, 0);
 // });
 
-// routes  routes/index.js contains 53-62 import user and cards router
-// instead of app.post, etc look at router.post, rouwter.use like cards.js route etc.
-// here is app.use(routes)//investigate
+
 app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
 app.post("/openai/haiku", generateHaiku);
 
-app.use("/users", auth, usersRouter);
-app.use("/cards", cardsRouter);
-
-app.use((req, res, next) => {
-  next(new NotFoundError("This route does not exist"));
-});
+app.use(routes);
 
 app.use(errorLogger); // winston
 app.use(errors()); // celebrate
