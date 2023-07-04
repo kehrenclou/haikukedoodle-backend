@@ -12,8 +12,9 @@ const { dbAddress } = require("./utils/config");
 const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
 
-const usersRouter = require("./routes/users");
-const cardsRouter = require("./routes/cards");
+const routes = require("./routes");
+// const usersRouter = require("./routes/users");
+// const cardsRouter = require("./routes/cards");
 
 const {
   validateLoginBody,
@@ -55,12 +56,13 @@ app.post("/signup", validateUserBody, createUser);
 app.post("/login", validateLoginBody, loginUser);
 app.post("/openai/haiku", generateHaiku);
 
-app.use("/users", auth, usersRouter);
-app.use("/cards",  cardsRouter);
+app.use(routes);
+// app.use("/users", auth, usersRouter);
+// app.use("/cards", cardsRouter);
 
-app.use((req, res, next) => {
-  next(new NotFoundError("This route does not exist"));
-});
+// app.use((req, res, next) => {
+//   next(new NotFoundError("This route does not exist"));
+// });
 
 app.use(errorLogger); // winston
 app.use(errors()); // celebrate
