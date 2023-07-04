@@ -54,9 +54,7 @@ const createUser = async (req, res, next) => {
   }
 };
 
-// gets the email and password from the request and authenticates them
-// only user id should be written to the token payload
-// once token created, send to client in response body
+
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
