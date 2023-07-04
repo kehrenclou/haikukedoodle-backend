@@ -13,16 +13,14 @@ const { createUser, loginUser } = require("./controllers/users");
 const { generateHaiku } = require("./controllers/openai");
 
 const routes = require("./routes");
-// const usersRouter = require("./routes/users");
-// const cardsRouter = require("./routes/cards");
+
 
 const {
   validateLoginBody,
   validateUserBody,
 } = require("./validations/validation");
-const auth = require("./middlewares/auth");
 
-const NotFoundError = require("./errors/not-found");
+
 const errorHandler = require("./middlewares/errorHandler");
 
 /* -------------------------- declare app and port -------------------------- */
