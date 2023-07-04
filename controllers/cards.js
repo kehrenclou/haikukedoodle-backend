@@ -61,7 +61,7 @@ const loadMoreBookmarks = (req, res, next) => {
     .catch(next);
 };
 
-//not working
+// not working
 const getOwnerCards = async (req, res, next) => {
   const userId = req.user._id;
   try {
@@ -118,11 +118,11 @@ const createCard = (req, res, next) => {
     });
 };
 
-//check this - may need to use populat not sure about brackets
+// check this - may need to use populat not sure about brackets
 const updateCardOwner = (req, res, next) => {
   const { author } = req.body;
   const { cardId } = req.params;
-  const userId = req.user._Id;
+  const userId = req.user._id;
 
   Card.findByIdAndUpdate(cardId, { userId, author }, { new: true })
     .orFail(() => new NotFoundError("No card found with that Id'"))
@@ -155,7 +155,7 @@ const deleteCard = (req, res, next) => {
     .catch(next);
 };
 
-//not working
+// not working
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
@@ -172,7 +172,7 @@ const likeCard = (req, res, next) => {
     .catch(next);
 };
 
-//not deleting
+// not deleting
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
