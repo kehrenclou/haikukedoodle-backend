@@ -1,8 +1,8 @@
-const Card = require('../models/card');
+const Card = require("../models/card");
 
-const BadRequestError = require('../errors/bad-request');
-const NotFoundError = require('../errors/not-found');
-const ForbiddenError = require('../errors/forbidden');
+const BadRequestError = require("../errors/bad-request");
+const NotFoundError = require("../errors/not-found");
+const ForbiddenError = require("../errors/forbidden");
 
 const getCards = async (req, res, next) => {
   try {
@@ -32,7 +32,7 @@ const loadMoreCards = (req, res, next) => {
 };
 
 const getBookmarks = async (req, res, next) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
   try {
     const bookmarks = await Card.find({ bookmarks: userId })
       .limit(6)
@@ -50,8 +50,8 @@ const getBookmarks = async (req, res, next) => {
   }
 };
 const loadMoreBookmarks = (req, res, next) => {
-  const { cardSkip, userId } = req.params;
-
+  const { cardSkip } = req.params;
+  const userId = req.user._id;
   Card.find({ bookmarks: userId })
     .limit(6)
     .skip(cardSkip)
@@ -61,8 +61,9 @@ const loadMoreBookmarks = (req, res, next) => {
     .catch(next);
 };
 
+//not working
 const getOwnerCards = async (req, res, next) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
   try {
     const ownerCards = await Card.find({ owner: userId })
       .limit(6)
@@ -80,8 +81,8 @@ const getOwnerCards = async (req, res, next) => {
   }
 };
 const loadMoreOwnerCards = (req, res, next) => {
-  const { cardSkip, userId } = req.params;
-
+  const { cardSkip } = req.params;
+  const userId = req.user._id;
   Card.find({ owner: userId })
     .limit(6)
     .skip(cardSkip)
@@ -92,9 +93,8 @@ const loadMoreOwnerCards = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
-  const {
-    aiId, created, choices, usage, subject, owner, author, terms,
-  } = req.body;
+  const userId = req.user._id;
+  const { aiId, created, choices, usage, subject, author, terms } = req.body;
 
   Card.create({
     aiId,
@@ -102,7 +102,7 @@ const createCard = (req, res, next) => {
     choices,
     usage,
     subject,
-    owner,
+    owner: userId,
     author,
     terms,
   })
@@ -110,24 +110,26 @@ const createCard = (req, res, next) => {
       res.status(201).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Data not valid'));
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Data not valid"));
       } else {
         next(err);
       }
     });
 };
 
+//check this - may need to use populat not sure about brackets
 const updateCardOwner = (req, res, next) => {
-  const { owner, author } = req.body;
+  const { author } = req.body;
   const { cardId } = req.params;
+  const userId = req.user._Id;
 
-  Card.findByIdAndUpdate(cardId, { owner, author }, { new: true })
+  Card.findByIdAndUpdate(cardId, { userId, author }, { new: true })
     .orFail(() => new NotFoundError("No card found with that Id'"))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Invalid Card Id'));
+      if (err.name === "CastError") {
+        next(new BadRequestError("Invalid Card Id"));
       } else {
         next(err);
       }
@@ -138,43 +140,44 @@ const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findById(cardId)
-    .orFail(() => new NotFoundError('No card found with that Id'))
+    .orFail(() => new NotFoundError("No card found with that Id"))
 
     .then((card) => {
       if (req.user._id.toString() === card.owner.toString()) {
         Card.findByIdAndDelete(cardId)
-          .orFail(() => new BadRequestError('Cannot Delete'))
+          .orFail(() => new BadRequestError("Cannot Delete"))
           .then((data) => res.send(data))
           .catch(next);
       } else {
-        throw new ForbiddenError('You do not have rights to delete card');
+        throw new ForbiddenError("You do not have rights to delete card");
       }
     })
     .catch(next);
 };
 
+//not working
 const likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user._id;
 
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
-    { new: true },
+    { new: true }
   )
-    .orFail(() => new NotFoundError('No card found with that Id'))
+    .orFail(() => new NotFoundError("No card found with that Id"))
     .then((card) => {
       res.send(card);
     })
     .catch(next);
 };
 
+//not deleting
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { userId } = req.body;
-
+  const userId = req.user._id;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
-    .orFail(() => new NotFoundError('No card found with that Id'))
+    .orFail(() => new NotFoundError("No card found with that Id"))
 
     .then((card) => {
       res.send(card);
@@ -184,14 +187,13 @@ const dislikeCard = (req, res, next) => {
 
 const addBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  // const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { bookmarks: req.user._id } },
-    { new: true },
+    { new: true }
   )
-    .orFail(() => new NotFoundError('No card found with that Id'))
+    .orFail(() => new NotFoundError("No card found with that Id"))
     .then((card) => {
       res.send(card);
     })
@@ -200,14 +202,13 @@ const addBookmark = (req, res, next) => {
 
 const removeBookmark = (req, res, next) => {
   const { cardId } = req.params;
-  // const { userId } = req.body;
 
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { bookmarks: req.user._id } },
-    { new: true },
+    { new: true }
   )
-    .orFail(() => new NotFoundError('No card found with that Id'))
+    .orFail(() => new NotFoundError("No card found with that Id"))
 
     .then((card) => {
       res.send(card);

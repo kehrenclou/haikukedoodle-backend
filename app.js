@@ -56,7 +56,7 @@ app.post("/login", validateLoginBody, loginUser);
 app.post("/openai/haiku", generateHaiku);
 
 app.use("/users", auth, usersRouter);
-app.use("/cards", cardsRouter);
+app.use("/cards",  cardsRouter);
 
 app.use((req, res, next) => {
   next(new NotFoundError("This route does not exist"));
