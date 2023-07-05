@@ -124,7 +124,7 @@ const updateCardOwner = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  Card.findByIdAndUpdate(cardId, { userId, author }, { new: true })
+  Card.findByIdAndUpdate(cardId, { "owner":userId, "author":author }, { new: true })
     .orFail(() => new NotFoundError("No card found with that Id'"))
     .then((card) => res.send(card))
     .catch((err) => {
