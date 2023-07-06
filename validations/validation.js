@@ -30,6 +30,9 @@ const validateUserBody = celebrate({
     isAnonymous: Joi.boolean().messages({
       "boolean.isAnonymous": "The is Anonymous must be boolean",
     }),
+    counter: Joi.number(),
+    counterTimeStamp: Joi.date(),
+    counterMax: Joi.number(),
   }),
 });
 

@@ -34,6 +34,8 @@ const generateHaiku = async (req, res, next) => {
       author: user.name,
       terms,
     });
+
+    
     return res.status(201).send(data);
   } catch (error) {
     if (error.response) {
