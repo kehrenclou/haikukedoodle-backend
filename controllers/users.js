@@ -86,7 +86,14 @@ const loginUser = (req, res, next) => {
 
 const increaseCount = (req, res, next) => {
   const userId = req.user._id;
-  User.findByIdAndUpdate(userId, { $inc: { counter: 1 } }, { new: true })
+  User.findByIdAndUpdate(
+    userId,
+    {
+      $inc: { counter: 1 },
+      $currentDate: { counterTimeStamp: { $type: "date" } },
+    },
+    { new: true }
+  )
     .orFail(() => new NotFoundError("No user found with this id"))
     .then((user) => res.send(user))
     .catch((err) => {
@@ -97,4 +104,17 @@ const increaseCount = (req, res, next) => {
       }
     });
 };
-module.exports = { sendUserProfile, createUser, loginUser, increaseCount };
+const resetCount = (req, res, next) => {
+  const userId = req.user._id;
+  User.findByIdAndUpdate(userId, { $set: { counter: 0 } }, { new: true })
+    .orFail(() => new NotFoundError("No user found with this id"))
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name == "CastError") {
+        next(new BadRequestError("Invalid User Id"));
+      } else {
+        next(err);
+      }
+    });
+};
+module.exports = { sendUserProfile, createUser, loginUser, increaseCount, resetCount };
