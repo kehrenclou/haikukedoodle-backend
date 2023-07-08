@@ -97,7 +97,7 @@ const increaseCount = (req, res, next) => {
     .orFail(() => new NotFoundError("No user found with this id"))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name == "CastError") {
+      if (err.name === "CastError") {
         next(new BadRequestError("Invalid User Id"));
       } else {
         next(err);
@@ -110,7 +110,7 @@ const resetCount = (req, res, next) => {
     .orFail(() => new NotFoundError("No user found with this id"))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name == "CastError") {
+      if (err.name === "CastError") {
         next(new BadRequestError("Invalid User Id"));
       } else {
         next(err);
